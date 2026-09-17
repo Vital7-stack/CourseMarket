@@ -1,0 +1,21 @@
+# Django
+*.sqlite3
+__pycache__/
+*.pyc
+media/
+staticfiles/
+
+# Virtual environments / Poetry
+.venv/
+venv/
+env/
+poetry.lock
+
+# Env files
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
