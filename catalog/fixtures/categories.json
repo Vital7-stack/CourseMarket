@@ -1,0 +1,50 @@
+[
+{
+  "model": "catalog.category",
+  "pk": 7,
+  "fields": {
+    "name": "Электроника",
+    "description": "Электронные товары"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 8,
+  "fields": {
+    "name": "Одежда",
+    "description": "Верхняя и нижняя одежда"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 9,
+  "fields": {
+    "name": "Книги",
+    "description": "Печатные издания"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 10,
+  "fields": {
+    "name": "Электроника",
+    "description": ""
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 11,
+  "fields": {
+    "name": "Книги",
+    "description": ""
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 12,
+  "fields": {
+    "name": "Одежда",
+    "description": ""
+  }
+}
+]
