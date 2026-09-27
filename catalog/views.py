@@ -4,7 +4,8 @@ from .forms import ContactForm
 
 
 def home(request):
-    products = Product.objects.all()
+    # Единственное изменение: берём только первые 3 товара
+    products = Product.objects.all()[:3]
     return render(request, 'catalog/home.html', {'products': products})
 
 
@@ -13,7 +14,6 @@ def contacts(request):
         form = ContactForm(request.POST)
         if form.is_valid():
             form.save()
-            # ИСПРАВЛЕНИЕ: редирект на главную страницу приложения catalog
             return redirect('catalog:home')
     else:
         form = ContactForm()

@@ -3,7 +3,8 @@
 {% block title %}Главная — CourseMarket{% endblock %}
 
 {% block content %}
-  <h1 class="mb-4">Каталог товаров</h1>
+  <h1 class="mb-4">Хиты продаж и лучшие предложения</h1>
+  <p class="lead text-muted">Подборка самых популярных товаров — только для вас</p>
 
   <div class="row">
     {% for product in products %}
@@ -29,4 +30,11 @@
       <p>Товаров пока нет.</p>
     {% endfor %}
   </div>
+
+  <hr>
+  <p>
+    <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary">
+      Смотреть весь каталог →
+    </a>
+  </p>
 {% endblock %}
