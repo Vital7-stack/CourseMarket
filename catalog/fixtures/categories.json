@@ -1,0 +1,26 @@
+[
+{
+  "model": "catalog.category",
+  "pk": 1,
+  "fields": {
+    "name": "Ёлектроника",
+    "description": "Ёлектронные товары"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 2,
+  "fields": {
+    "name": "ќдежда",
+    "description": "¬ерхн€€ и нижн€€ одежда"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 3,
+  "fields": {
+    "name": " ниги",
+    "description": "ѕечатные издани€"
+  }
+}
+]

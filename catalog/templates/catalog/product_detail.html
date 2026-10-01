@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} — CourseMarket{% endblock %}
+
+{% block content %}
+<div class="product-detail">
+    <a href="{% url 'catalog:home' %}" class="mb-3 d-inline-block text-decoration-none text-dark">← Вернуться на главную</a>
+
+    <h1>{{ product.name }}</h1>
+
+    {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 100%; height: auto; margin-bottom: 20px;">
+    {% else %}
+        <p>Изображение не загружено</p>
+    {% endif %}
+
+    <p><strong>Цена:</strong> {{ product.price }} ₽</p>
+    <p><strong>Описание:</strong></p>
+    <p>{{ product.description }}</p>
+
+    <a href="{% url 'catalog:product_list' %}" class="text-decoration-none">← Вернуться в каталог</a>
+</div>
+{% endblock %}
