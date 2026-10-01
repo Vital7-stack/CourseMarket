@@ -1,30 +1,43 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView, DetailView
+from django.views.generic.edit import FormView
+from django.urls import reverse_lazy
+
 from .models import Product
 from .forms import ContactForm
 
 
-def home(request):
-    # Единственное изменение: берём только первые 3 товара
-    products = Product.objects.all()[:3]
-    return render(request, 'catalog/home.html', {'products': products})
+class HomeView(ListView):
+    """Главная страница: 3 последних товара."""
+    model = Product
+    template_name = 'catalog/home.html'
+    context_object_name = 'products'
+
+    def get_queryset(self):
+        # Берём только первые 3 товара — как было в старом FBV
+        return Product.objects.all()[:3]
 
 
-def contacts(request):
-    if request.method == 'POST':
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('catalog:home')
-    else:
-        form = ContactForm()
-    return render(request, 'catalog/contacts.html', {'form': form})
+class ProductListView(ListView):
+    """Каталог всех товаров."""
+    model = Product
+    template_name = 'products/product_list.html'
+    context_object_name = 'products'
 
 
-def product_list(request):
-    products = Product.objects.all()
-    return render(request, 'products/product_list.html', {'products': products})
+class ProductDetailView(DetailView):
+    """Страница одного товара."""
+    model = Product
+    template_name = 'products/product_detail.html'
+    context_object_name = 'product'
 
 
-def product_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    return render(request, 'products/product_detail.html', {'product': product})
+class ContactsView(FormView):
+    """Страница контактов с формой обратной связи."""
+    template_name = 'catalog/contacts.html'
+    form_class = ContactForm
+    success_url = reverse_lazy('catalog:home')
+
+    def form_valid(self, form):
+        # Сохраняем сообщение в БД, как было в старом FBV
+        form.save()
+        return super().form_valid(form)
