@@ -1,9 +1,9 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic.edit import FormView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 
 from .models import Product
-from .forms import ContactForm
+from .forms import ContactForm, ProductForm
 
 
 class HomeView(ListView):
@@ -13,7 +13,6 @@ class HomeView(ListView):
     context_object_name = 'products'
 
     def get_queryset(self):
-        # Берём только первые 3 товара — как было в старом FBV
         return Product.objects.all()[:3]
 
 
@@ -31,6 +30,34 @@ class ProductDetailView(DetailView):
     context_object_name = 'product'
 
 
+# === НОВОЕ ДЛЯ ДОМАШКИ 3 ===
+
+class ProductCreateView(CreateView):
+    """Создание нового товара."""
+    model = Product
+    form_class = ProductForm
+    template_name = 'products/product_form.html'
+    success_url = reverse_lazy('catalog:product_list')
+
+
+class ProductUpdateView(UpdateView):
+    """Редактирование товара."""
+    model = Product
+    form_class = ProductForm
+    template_name = 'products/product_form.html'
+
+    def get_success_url(self):
+        # После редактирования — на страницу этого товара
+        return reverse('catalog:product_detail', kwargs={'pk': self.object.pk})
+
+
+class ProductDeleteView(DeleteView):
+    """Удаление товара."""
+    model = Product
+    template_name = 'products/product_confirm_delete.html'
+    success_url = reverse_lazy('catalog:product_list')
+
+
 class ContactsView(FormView):
     """Страница контактов с формой обратной связи."""
     template_name = 'catalog/contacts.html'
@@ -38,6 +65,5 @@ class ContactsView(FormView):
     success_url = reverse_lazy('catalog:home')
 
     def form_valid(self, form):
-        # Сохраняем сообщение в БД, как было в старом FBV
         form.save()
         return super().form_valid(form)

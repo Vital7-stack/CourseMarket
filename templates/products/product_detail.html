@@ -17,5 +17,10 @@
     <p>{{ product.description }}</p>
 
     <a href="{% url 'catalog:product_list' %}">← Вернуться в каталог</a>
+
+    <hr>
+
+    <a href="{% url 'catalog:product_update' product.pk %}" class="btn btn-outline-primary btn-sm">Редактировать</a>
+    <a href="{% url 'catalog:product_delete' product.pk %}" class="btn btn-outline-danger btn-sm">Удалить</a>
 </div>
 {% endblock %}
