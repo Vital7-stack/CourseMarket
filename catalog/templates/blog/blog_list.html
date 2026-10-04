@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Блог — CourseMarket{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Блог</h1>
+
+<div class="row">
+  {% for post in posts %}
+    <div class="col-md-6 mb-4">
+      <div class="card h-100 shadow-sm">
+        {% if post.preview %}
+          <img src="{{ post.preview.url }}" class="card-img-top"
+               alt="{{ post.title }}" style="height: 200px; object-fit: cover;">
+        {% else %}
+          <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
+               style="height: 200px; color: #999;">Нет превью</div>
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ post.title }}</h5>
+          <p class="card-text">{{ post.content|truncatechars:150 }}</p>
+          <p class="text-muted small">Просмотров: {{ post.views_count }}</p>
+          <a href="{% url 'blog:blog_detail' post.pk %}" class="btn btn-primary btn-sm">Читать →</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="alert alert-info">Статей пока нет.</div>
+  {% endfor %}
+</div>
+
+<a href="{% url 'blog:blog_create' %}" class="btn btn-success mt-3">+ Новая статья</a>
+{% endblock %}
