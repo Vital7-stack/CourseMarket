@@ -3,7 +3,10 @@
 {% block title %}Каталог товаров — CourseMarket{% endblock %}
 
 {% block content %}
-  <h1 class="mb-4">Каталог товаров</h1>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Каталог товаров</h1>
+    <a href="{% url 'catalog:product_create' %}" class="btn btn-success">+ Новый товар</a>
+  </div>
 
   {% if products %}
     <div class="row">

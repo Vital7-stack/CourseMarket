@@ -4,15 +4,24 @@ from . import views
 app_name = 'catalog'
 
 urlpatterns = [
-    # Главная страница (для ссылки "Главная" в меню)
-    path('', views.home, name='home'),
+    # Главная
+    path('', views.HomeView.as_view(), name='home'),
 
-    # Каталог товаров (для ссылки "Каталог" в меню)
-    path('products/', views.product_list, name='product_list'),
+    # Каталог товаров
+    path('products/', views.ProductListView.as_view(), name='product_list'),
 
     # Детальная страница товара
-    path('products/<int:pk>/', views.product_detail, name='product_detail'),
+    path('products/<int:pk>/', views.ProductDetailView.as_view(), name='product_detail'),
+
+    # Создание товара (ВНИМАНИЕ: стоит ДО <int:pk>/, чтобы не перехватилось)
+    path('products/create/', views.ProductCreateView.as_view(), name='product_create'),
+
+    # Редактирование товара
+    path('products/<int:pk>/update/', views.ProductUpdateView.as_view(), name='product_update'),
+
+    # Удаление товара
+    path('products/<int:pk>/delete/', views.ProductDeleteView.as_view(), name='product_delete'),
 
     # Контакты
-    path('contacts/', views.contacts, name='contacts'),
+    path('contacts/', views.ContactsView.as_view(), name='contacts'),
 ]
