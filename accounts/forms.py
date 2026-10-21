@@ -1,4 +1,5 @@
 from django import forms
+from .models import User
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -28,7 +29,6 @@ class RegistrationForm(forms.ModelForm):
         if password1 and password2 and password1 != password2:
             raise ValidationError("Пароли не совпадают.")
 
-        # Проверка сложности пароля
         if password1:
             try:
                 validate_password(password1)
@@ -43,3 +43,22 @@ class RegistrationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        # Только данные для редактирования. Паролей здесь нет.
+        fields = ['email', 'username', 'phone', 'country', 'avatar']
+        labels = {
+            'username': 'Имя пользователя',
+            'phone': 'Номер телефона',
+            'country': 'Страна',
+            'avatar': 'Аватар',
+        }
+        widgets = {
+            'email': forms.TextInput(attrs={'class': 'form-control'}),
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+7...'}),
+            'country': forms.TextInput(attrs={'class': 'form-control'}),
+        }

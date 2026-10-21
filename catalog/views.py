@@ -2,7 +2,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy, reverse
 
-# ДОБАВЛЕНО: миксин для защиты страниц
+# Миксин для защиты страниц
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Product
@@ -26,14 +26,14 @@ class ProductListView(ListView):
     context_object_name = 'products'
 
 
-class ProductDetailView(DetailView):
-    """Страница одного товара (публичная страница)."""
+class ProductDetailView(LoginRequiredMixin, DetailView):
+    """Страница одного товара (только для авторизованных)."""
     model = Product
     template_name = 'products/product_detail.html'
     context_object_name = 'product'
+    # login_url УДАЛЁН: Django берёт его из settings.py (LOGIN_URL)
 
 
-# === ИЗМЕНЕНО: добавлен LoginRequiredMixin ===
 class ProductCreateView(LoginRequiredMixin, CreateView):
     """Создание нового товара (только для авторизованных)."""
     model = Product
@@ -42,7 +42,6 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('catalog:product_list')
 
 
-# === ИЗМЕНЕНО: добавлен LoginRequiredMixin ===
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     """Редактирование товара (только для авторизованных)."""
     model = Product
@@ -54,7 +53,6 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('catalog:product_detail', kwargs={'pk': self.object.pk})
 
 
-# === ИЗМЕНЕНО: добавлен LoginRequiredMixin ===
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     """Удаление товара (только для авторизованных)."""
     model = Product

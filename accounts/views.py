@@ -1,9 +1,17 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail
 from django.conf import settings
-from .forms import RegistrationForm
+from django.contrib import messages
+
+# Для UpdateView и защиты страниц
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.edit import UpdateView
+from django.urls import reverse_lazy
+
+from .forms import RegistrationForm, ProfileUpdateForm
+
 
 def register_view(request):
     if request.method == "POST":
@@ -40,3 +48,25 @@ def login_view(request):
         form = AuthenticationForm()
 
     return render(request, "accounts/login.html", {"form": form})
+
+
+# === ЭТОТ КЛАСС ЗАМЕНЯЕТ ФУНКЦИЮ profile_update_view ===
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    form_class = ProfileUpdateForm
+    template_name = 'accounts/profile_update.html'
+    success_url = reverse_lazy('accounts:profile')
+    # login_url не нужен, так как в settings.py уже есть LOGIN_URL = 'accounts:login'
+
+    def get_object(self):
+        # Автоматически подставляет текущего пользователя как instance
+        return self.request.user
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Профиль успешно обновлён!')
+        return super().form_valid(form)
+# =========================================================
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("catalog:home")

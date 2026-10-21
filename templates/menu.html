@@ -4,12 +4,31 @@
   <a href="{% url 'blog:blog_list' %}" style="color: white; text-decoration: none;">Блог</a>
   <a href="{% url 'catalog:contacts' %}" style="color: white; text-decoration: none;">Контакты</a>
 
+  <!-- Блок сообщений -->
+  {% if messages %}
+    <div style="padding: 6px 12px; background: #d4edda; color: #155724; border-radius: 4px; font-size: 0.9rem;">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+  {% endif %}
+
   {% if user.is_authenticated %}
-    <span style="color:white;">Привет, {{ user.username }}</span>
-    <!-- ← ДОБАВЛЕНА кнопка выхода -->
-    <form action="{% url 'logout' %}" method="post" style="margin:0; display:inline;">
+    <span style="color: white;">Привет, {{ user.username }}</span>
+
+    <!-- Кнопка «Профиль» -->
+    <a href="{% url 'accounts:profile' %}"
+       style="color: #ffd700; text-decoration: underline; cursor: pointer; font-weight: 500;">
+      Профиль
+    </a>
+
+    <!-- Форма выхода (исправлено: добавлен закрывающий > и выровнены отступы) -->
+    <form action="{% url 'accounts:logout' %}" method="post" style="margin: 0; display: inline;">
       {% csrf_token %}
-      <button type="submit" style="background:none; border:none; color:red; text-decoration:underline; cursor:pointer;">Выйти</button>
+      <button type="submit"
+              style="background: none; border: none; color: red; text-decoration: underline; cursor: pointer;">
+        Выйти
+      </button>
     </form>
   {% else %}
     <a href="{% url 'accounts:login' %}" style="color: white; text-decoration: none;">Вход</a>

@@ -7,8 +7,6 @@ class User(AbstractUser):
     phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="Номер телефона")
     country = models.CharField(max_length=100, blank=True, null=True, verbose_name="Страна")
 
-    groups = None
-    user_permissions = None
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]  # username Django всё равно требует, но вход по email
