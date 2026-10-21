@@ -1,0 +1,24 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Каталог товаров — CourseMarket{% endblock %}
+
+{% block content %}
+    <h1>Каталог товаров</h1>
+
+    {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+                <div class="product-card">
+                    <a href="{% url 'catalog:product_detail' product.pk %}">
+                        <h3>{{ product.name }}</h3>
+                        <p>{{ product.description|truncatechars:100 }}</p>
+                        <p class="price">{{ product.price }} ₽</p>
+                    </a>
+                    <a href="{% url 'catalog:product_detail' product.pk %}" class="btn">Подробнее</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Товаров пока нет.</p>
+    {% endif %}
+{% endblock %}

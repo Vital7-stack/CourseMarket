@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная — CourseMarket{% endblock %}
+
+{% block content %}
+  <h1 class="mb-4">Хиты продаж и лучшие предложения</h1>
+  <p class="lead text-muted">Подборка самых популярных товаров — только для вас</p>
+
+  <div class="row">
+    {% for product in products %}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top"
+                 alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+          {% else %}
+            <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
+                 style="height: 200px; color: #999;">Нет фото</div>
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="card-text">{{ product.description|truncatechars:100 }}</p>
+            <p><strong>{{ product.price }} ₽</strong></p>
+            <a href="{% url 'catalog:product_detail' pk=product.pk %}"
+               class="btn btn-primary">Подробнее</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>Товаров пока нет.</p>
+    {% endfor %}
+  </div>
+
+  <hr>
+  <p>
+    <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary">
+      Смотреть весь каталог →
+    </a>
+  </p>
+{% endblock %}

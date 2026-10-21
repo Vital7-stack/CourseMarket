@@ -1,0 +1,28 @@
+[
+{
+  "model": "catalog.product",
+  "pk": 1,
+  "fields": {
+    "name": "Смартфон",
+    "description": "Современный смартфон",
+    "image": "",
+    "category": 1,
+    "price": "29990.00",
+    "created_at": "2026-09-27T04:08:54.577Z",
+    "updated_at": "2026-09-27T04:08:54.578Z"
+  }
+},
+{
+  "model": "catalog.product",
+  "pk": 2,
+  "fields": {
+    "name": "Футболка",
+    "description": "Хлопковая футболка",
+    "image": "",
+    "category": 2,
+    "price": "1200.00",
+    "created_at": "2026-09-27T04:12:53.143Z",
+    "updated_at": "2026-09-27T04:23:48.562Z"
+  }
+}
+]

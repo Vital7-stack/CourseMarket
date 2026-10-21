@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} — Блог{% endblock %}
+
+{% block content %}
+<a href="{% url 'blog:blog_list' %}" class="mb-3 d-inline-block text-decoration-none text-dark">← Назад к списку</a>
+
+<article>
+  <h1>{{ post.title }}</h1>
+
+  {% if post.preview %}
+    <img src="{{ post.preview.url }}" alt="{{ post.title }}"
+         style="max-width: 100%; height: auto; margin-bottom: 20px;">
+  {% endif %}
+
+  <p class="text-muted">Дата: {{ post.created_at|date:"d.m.Y H:i" }} | Просмотров: {{ post.views_count }}</p>
+
+  <div class="mt-3">
+    {{ post.content|linebreaks }}
+  </div>
+</article>
+
+<hr>
+
+<a href="{% url 'blog:blog_update' post.pk %}" class="btn btn-outline-primary btn-sm">Редактировать</a>
+<a href="{% url 'blog:blog_delete' post.pk %}" class="btn btn-outline-danger btn-sm">Удалить</a>
+{% endblock %}
