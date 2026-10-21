@@ -5,12 +5,14 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
 
-# Для UpdateView и защиты страниц
+# Для классов представлений (UpdateView, DetailView) и защиты
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import UpdateView
+from django.views.generic import DetailView  # <-- ЭТОГО НЕ ХВАТАЛО
 from django.urls import reverse_lazy
 
 from .forms import RegistrationForm, ProfileUpdateForm
+from .models import User  # <-- ЭТОГО ТОЖЕ НЕ ХВАТАЛО (чтобы работало model = User)
 
 
 def register_view(request):
@@ -50,21 +52,30 @@ def login_view(request):
     return render(request, "accounts/login.html", {"form": form})
 
 
-# === ЭТОТ КЛАСС ЗАМЕНЯЕТ ФУНКЦИЮ profile_update_view ===
+# --- КЛАСС ДЛЯ РЕДАКТИРОВАНИЯ ПРОФИЛЯ (У ТЕБЯ УЖЕ БЫЛ) ---
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ProfileUpdateForm
     template_name = 'accounts/profile_update.html'
     success_url = reverse_lazy('accounts:profile')
-    # login_url не нужен, так как в settings.py уже есть LOGIN_URL = 'accounts:login'
 
     def get_object(self):
-        # Автоматически подставляет текущего пользователя как instance
+        # Защита: редактируем только свой профиль
         return self.request.user
 
     def form_valid(self, form):
         messages.success(self.request, 'Профиль успешно обновлён!')
         return super().form_valid(form)
-# =========================================================
+
+
+# --- НОВЫЙ КЛАСС ДЛЯ ПРОСМОТРА ПРОФИЛЯ (ЗАЩИЩЁННЫЙ DETAILVIEW) ---
+class ProfileDetailView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'accounts/profile_detail.html'
+    context_object_name = 'user_profile'
+
+    def get_object(self, queryset=None):
+        # Защита: показываем только профиль текущего пользователя
+        return self.request.user
 
 
 def logout_view(request):
