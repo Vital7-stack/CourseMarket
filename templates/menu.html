@@ -1,6 +1,18 @@
 <nav style="display: flex; gap: 20px; align-items: center;">
-    <a href="{% url 'catalog:home' %}" style="color: white; text-decoration: none; font-weight: bold;">Главная</a>
-    <a href="{% url 'catalog:product_list' %}" style="color: white; text-decoration: none;">Каталог</a>
-    <a href="{% url 'blog:blog_list' %}" style="color: white; text-decoration: none;">Блог</a>
-    <a href="{% url 'catalog:contacts' %}" style="color: white; text-decoration: none;">Контакты</a>
+  <a href="{% url 'catalog:home' %}" style="color: white; text-decoration: none; font-weight: bold;">Главная</a>
+  <a href="{% url 'catalog:product_list' %}" style="color: white; text-decoration: none;">Каталог</a>
+  <a href="{% url 'blog:blog_list' %}" style="color: white; text-decoration: none;">Блог</a>
+  <a href="{% url 'catalog:contacts' %}" style="color: white; text-decoration: none;">Контакты</a>
+
+  {% if user.is_authenticated %}
+    <span style="color:white;">Привет, {{ user.username }}</span>
+    <!-- ← ДОБАВЛЕНА кнопка выхода -->
+    <form action="{% url 'logout' %}" method="post" style="margin:0; display:inline;">
+      {% csrf_token %}
+      <button type="submit" style="background:none; border:none; color:red; text-decoration:underline; cursor:pointer;">Выйти</button>
+    </form>
+  {% else %}
+    <a href="{% url 'accounts:login' %}" style="color: white; text-decoration: none;">Вход</a>
+    <a href="{% url 'accounts:signup' %}" style="color: white; text-decoration: none;">Регистрация</a>
+  {% endif %}
 </nav>

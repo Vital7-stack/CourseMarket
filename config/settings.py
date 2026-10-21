@@ -100,15 +100,13 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
+# Email-настройки
+DEFAULT_FROM_EMAIL = 'noreply@coursemarket.com'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # Static files
 STATIC_URL = "static/"
-
-# Email
-MAILERS = {
-    "default": {
-        "BACKEND": "django.core.mail.backends.console.EmailBackend",
-    },
-}
 
 # Media files
 MEDIA_URL = '/media/'
