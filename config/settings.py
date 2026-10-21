@@ -12,13 +12,17 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 2. Загружаем переменные из .env, который лежит в корне проекта
-# Это гарантирует, что файл найдётся, даже если ты запускаешь manage.py из другой папки
 load_dotenv(BASE_DIR / ".env")
 
 # Quick-start development settings
 SECRET_KEY = "django-insecure-v7!@m9gs=+!gyyxq(ai-yy_)k4ok=@e)u3du6ioso%#glios$c"
 DEBUG = True
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+
+# === ДОБАВЛЕНО: кастомная модель пользователя и URL входа ===
+AUTH_USER_MODEL = "accounts.User"
+LOGIN_URL = 'accounts:login'
+# =========================================================
 
 # Application definition
 INSTALLED_APPS = [
@@ -30,6 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "catalog",
     "blog",
+    "accounts",
 ]
 
 MIDDLEWARE = [
@@ -65,7 +70,6 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        # Используем os.environ без .get для пароля — так сразу будет понятная ошибка, если .env потерялся
         "NAME": os.environ.get("DB_NAME"),
         "USER": os.environ.get("DB_USER"),
         "PASSWORD": os.environ["DB_PASSWORD"],
@@ -105,6 +109,7 @@ MAILERS = {
         "BACKEND": "django.core.mail.backends.console.EmailBackend",
     },
 }
+
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
