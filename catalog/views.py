@@ -2,6 +2,9 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy, reverse
 
+# Миксин для защиты страниц
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from .models import Product
 from .forms import ContactForm, ProductForm
 
@@ -17,31 +20,30 @@ class HomeView(ListView):
 
 
 class ProductListView(ListView):
-    """Каталог всех товаров."""
+    """Каталог всех товаров (публичная страница)."""
     model = Product
     template_name = 'products/product_list.html'
     context_object_name = 'products'
 
 
-class ProductDetailView(DetailView):
-    """Страница одного товара."""
+class ProductDetailView(LoginRequiredMixin, DetailView):
+    """Страница одного товара (только для авторизованных)."""
     model = Product
     template_name = 'products/product_detail.html'
     context_object_name = 'product'
+    # login_url УДАЛЁН: Django берёт его из settings.py (LOGIN_URL)
 
 
-# === НОВОЕ ДЛЯ ДОМАШКИ 3 ===
-
-class ProductCreateView(CreateView):
-    """Создание нового товара."""
+class ProductCreateView(LoginRequiredMixin, CreateView):
+    """Создание нового товара (только для авторизованных)."""
     model = Product
     form_class = ProductForm
     template_name = 'products/product_form.html'
     success_url = reverse_lazy('catalog:product_list')
 
 
-class ProductUpdateView(UpdateView):
-    """Редактирование товара."""
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
+    """Редактирование товара (только для авторизованных)."""
     model = Product
     form_class = ProductForm
     template_name = 'products/product_form.html'
@@ -51,15 +53,15 @@ class ProductUpdateView(UpdateView):
         return reverse('catalog:product_detail', kwargs={'pk': self.object.pk})
 
 
-class ProductDeleteView(DeleteView):
-    """Удаление товара."""
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
+    """Удаление товара (только для авторизованных)."""
     model = Product
     template_name = 'products/product_confirm_delete.html'
     success_url = reverse_lazy('catalog:product_list')
 
 
 class ContactsView(FormView):
-    """Страница контактов с формой обратной связи."""
+    """Страница контактов с формой обратной связи (публичная)."""
     template_name = 'catalog/contacts.html'
     form_class = ContactForm
     success_url = reverse_lazy('catalog:home')
