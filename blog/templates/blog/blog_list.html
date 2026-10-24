@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Блог</h1>
+
+  {% if posts %}
+    {% for post in posts %}
+      <div class="post">
+        <h2>{{ post.title }}</h2>
+
+        {% if post.preview %}
+          <img src="{{ post.preview.url }}" alt="{{ post.title }}" style="max-width: 300px;">
+        {% endif %}
+
+        <p>{{ post.content|truncatewords:20 }}</p>
+      </div>
+      <hr>
+    {% endfor %}
+  {% else %}
+    <p>Записей пока нет. Добавь пост в админке и обязательно поставь галочку «Опубликовано»!</p>
+  {% endif %}
+{% endblock %}
