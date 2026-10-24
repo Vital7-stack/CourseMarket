@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.models import Permission
 from .models import Category, Product, ContactMessage
 
 @admin.register(Category)
@@ -18,3 +19,6 @@ class ContactMessageAdmin(admin.ModelAdmin):
     list_filter = ('created_at',)
     search_fields = ('name', 'email', 'message')
     readonly_fields = ('created_at',)
+
+# Самое важное: добавляем это в самый конец файла
+#admin.site.register(Permission)
