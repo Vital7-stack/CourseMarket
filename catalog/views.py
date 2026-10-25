@@ -1,11 +1,14 @@
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseBadRequest  # Правильный импорт
 
-from .models import Product
+from .models import Product, Category
 from .forms import ContactForm, ProductForm
+from .services import get_product_by_id, get_products_by_category
 
 
 class HomeView(ListView):
@@ -36,7 +39,6 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('catalog:product_list')
 
     def form_valid(self, form):
-        # ВАЖНО: Автоматически привязываем текущего пользователя к полю owner
         product = form.save(commit=False)
         product.owner = self.request.user
         product.save()
@@ -53,7 +55,6 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
-        # ИСПРАВЛЕНО: было .author, стало .owner
         if self.object.owner == request.user or request.user.has_perm('catalog.can_unpublish_product'):
             return super().dispatch(request, *args, **kwargs)
         raise PermissionDenied("Вы не можете редактировать этот товар")
@@ -66,7 +67,6 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
-        # ИСПРАВЛЕНО: было .author, стало .owner
         if self.object.owner == request.user or request.user.has_perm('catalog.can_unpublish_product'):
             return super().dispatch(request, *args, **kwargs)
         raise PermissionDenied("Вы не можете удалять этот товар")
@@ -80,3 +80,25 @@ class ContactsView(FormView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
+
+
+def product_detail(request, product_id):
+    product = get_product_by_id(product_id)
+    if not product:
+        return render(request, '404.html', status=404)
+    return render(request, 'catalog/product_detail.html', {'product': product})
+
+
+def category_products(request, slug=None, category_id=None):
+    if slug:
+        category = get_object_or_404(Category, slug=slug)
+    elif category_id:
+        category = get_object_or_404(Category, id=category_id)
+    else:
+        return HttpResponseBadRequest("Недостаточно параметров")
+
+    products = get_products_by_category(category.id)
+    return render(request, 'catalog/category_products.html', {
+        'category': category,
+        'products': products
+    })

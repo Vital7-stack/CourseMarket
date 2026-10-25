@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+   # "django.middleware.cache.UpdateCacheMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -45,6 +46,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    #"django.middleware.cache.FetchFromCacheMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -117,3 +119,47 @@ STATIC_URL = "static/"
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',  # База данных Redis 1
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'SERIALIZER': 'django_redis.serializers.json.JSONSerializer',
+            #'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',  # Возвращаем компрессор
+            'IGNORE_EXCEPTIONS': False,
+            'CONNECTION_POOL_KWARGS': {
+                'socket_connect_timeout': 5,
+                'socket_timeout': 5
+            }  # Добавлена закрывающая скобка для CONNECTION_POOL_KWARGS
+        }  # Добавлена закрывающая скобка для OPTIONS
+    }
+}  # Закрывающая скобка для CACHES
+
+# Настройки логирования
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'catalog': {  # Логгер для вашего приложения catalog
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

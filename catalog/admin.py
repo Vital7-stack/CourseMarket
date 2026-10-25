@@ -4,8 +4,9 @@ from .models import Category, Product, ContactMessage
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+    list_display = ('id', 'name', 'slug')
     search_fields = ('name', 'description')
+    prepopulated_fields = {"slug": ("name",)}
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -19,6 +20,3 @@ class ContactMessageAdmin(admin.ModelAdmin):
     list_filter = ('created_at',)
     search_fields = ('name', 'email', 'message')
     readonly_fields = ('created_at',)
-
-# Самое важное: добавляем это в самый конец файла
-#admin.site.register(Permission)

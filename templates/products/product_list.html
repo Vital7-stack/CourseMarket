@@ -31,7 +31,7 @@
                 <span class="fw-bold text-primary">{{ product.price }} ₽</span>
 
                 <!-- КНОПКИ РЕДАКТИРОВАНИЯ И УДАЛЕНИЯ (видны только владельцу или модератору) -->
-                {% if product.owner == user or user.has_perm('catalog.can_unpublish_product') %}
+                {% if product.owner == user or perms.catalog.can_unpublish_product %}
                   <div class="btn-group">
                     <a href="{% url 'catalog:product_update' pk=product.pk %}"
                        class="btn btn-sm btn-outline-primary">✏️ Редактировать</a>

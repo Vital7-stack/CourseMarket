@@ -1,10 +1,15 @@
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
-
+from django.utils.text import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length=255, verbose_name="Название")
+    slug = models.SlugField(
+        max_length=255,
+        unique=True,
+        verbose_name="Слаг"
+    )
     description = models.TextField(blank=True, verbose_name="Описание")
 
     class Meta:
@@ -14,6 +19,16 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.name)
+            unique_slug = base_slug
+            num = 1
+            while Category.objects.filter(slug=unique_slug).exists():
+                unique_slug = f"{base_slug}-{num}"
+                num += 1
+            self.slug = unique_slug
+        super().save(*args, **kwargs)
 
 class Product(models.Model):
     name = models.CharField(max_length=255, verbose_name="Название")
@@ -29,7 +44,6 @@ class Product(models.Model):
 
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
 
-    # Поле владельца (для привязки к кастомному пользователю)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -37,7 +51,6 @@ class Product(models.Model):
         verbose_name="Владелец"
     )
 
-    # Статусы публикации
     STATUS_CHOICES = [
         ('draft', 'Черновик'),
         ('pending', 'На модерации'),
@@ -63,7 +76,6 @@ class Product(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.category.name})"
-
 
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100, verbose_name="Имя")
