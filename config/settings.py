@@ -12,13 +12,17 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 2. Загружаем переменные из .env, который лежит в корне проекта
-# Это гарантирует, что файл найдётся, даже если ты запускаешь manage.py из другой папки
 load_dotenv(BASE_DIR / ".env")
 
 # Quick-start development settings
 SECRET_KEY = "django-insecure-v7!@m9gs=+!gyyxq(ai-yy_)k4ok=@e)u3du6ioso%#glios$c"
 DEBUG = True
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+
+# === ДОБАВЛЕНО: кастомная модель пользователя и URL входа ===
+AUTH_USER_MODEL = "accounts.User"
+LOGIN_URL = 'accounts:login'
+# =========================================================
 
 # Application definition
 INSTALLED_APPS = [
@@ -28,11 +32,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "catalog",
+    "catalog.apps.CatalogConfig",
     "blog",
+    "accounts",
 ]
 
 MIDDLEWARE = [
+   # "django.middleware.cache.UpdateCacheMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -40,6 +46,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    #"django.middleware.cache.FetchFromCacheMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -65,7 +72,6 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        # Используем os.environ без .get для пароля — так сразу будет понятная ошибка, если .env потерялся
         "NAME": os.environ.get("DB_NAME"),
         "USER": os.environ.get("DB_USER"),
         "PASSWORD": os.environ["DB_PASSWORD"],
@@ -90,21 +96,70 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Настройки интернационализации
+LANGUAGES = [
+    ('ru', 'Русский'),  # Русский язык добавлен первым
+    ('en', 'English'),  # Английский язык
+]
+
 # Internationalization
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "ru-ru"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
+# Email-настройки
+DEFAULT_FROM_EMAIL = 'noreply@coursemarket.com'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # Static files
 STATIC_URL = "static/"
 
-# Email
-MAILERS = {
-    "default": {
-        "BACKEND": "django.core.mail.backends.console.EmailBackend",
-    },
-}
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',  # База данных Redis 1
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'SERIALIZER': 'django_redis.serializers.json.JSONSerializer',
+            #'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',  # Возвращаем компрессор
+            'IGNORE_EXCEPTIONS': False,
+            'CONNECTION_POOL_KWARGS': {
+                'socket_connect_timeout': 5,
+                'socket_timeout': 5
+            }  # Добавлена закрывающая скобка для CONNECTION_POOL_KWARGS
+        }  # Добавлена закрывающая скобка для OPTIONS
+    }
+}  # Закрывающая скобка для CACHES
+
+# Настройки логирования
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'catalog': {  # Логгер для вашего приложения catalog
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
